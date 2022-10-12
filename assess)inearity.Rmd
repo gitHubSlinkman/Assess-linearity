@@ -1,0 +1,109 @@
+---
+title: "Assessing Linearity for linear regression models using R"
+author: "Craig W. Slinkman"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Assessing Linearity for linear regression models using R
+
+The purpose of this document is to show how we can assess the linearity of
+simple linear regression models using R.  Since I live in the tidyverse I will
+be using the tidyverse approach although you can carry out this analysis with 
+base R.
+
+Before we start will will ne to load packages that will be needed to handle our
+analysis.
+
+## Initialization
+
+```{r}
+# Note that you can use libray command instead of require in the statements 
+# below.
+#
+require(here)                               # To locate this project in file 
+                                            # system.
+#
+require(tidyverse)                          # I live in the tidyverse.
+require(UsingR)                             # For the diamond proce data set.
+require(cowplot)                            # I prefer the cowplot look for 
+                                            # plots.
+theme_set(theme_cowplot())
+```
+
+## Example I: Price by size for diamond rings
+
+The first data set we will anlyze is to predict the price of starter, i.e., 
+inexpensive diamond rings.  This data was taken from a newspaper advertisement
+from a Singapore newspaper.  Documentation of this data set can be found at 
+https://rdrr.io/cran/UsingR/man/diamond.html.
+
+## Data set documentation
+
+The following is from the provided data set documentation:
+
+### Description
+A data set on 48 diamond rings containing price in Singapore dollars and size of diamond in carats.
+
+### Usage
+data(diamond)  
+
+### Format
+A data frame with 48 observations on the following 2 variables.
+
+carat --A measurement of a diamond's weight
+
+price --Price in Singapore dollars
+
+### Details
+This data comes from a collection of the Journal of Statistics Education. The accompanying documentation says:
+
+“Data presented in a newspaper advertisement suggest the use of simple linear regression to relate the prices of diamond rings to the weights of their diamond stones. The intercept of the resulting regression line is negative and significantly different from zero. This finding raises questions about an assumed pricing mechanism and motivates consideration of remedial actions.”
+
+Source
+This comes from http://jse.amstat.org/datasets/diamond.txt. Data set is contributed by Singfat Chu.
+
+### Load the diamond data frame and convert it to a tibble
+
+In the tidyverse we use tibbles instead of dataframes. We will load the dataframe and convert it
+to a tibble.  A tibble(https://tibble.tidyverse.org/), or tbl_df, is a modern reimagining of the data.frame, keeping what time has proven to be effective, and throwing out what is not. Tibbles are data.frames that are lazy and surly: they do less (i.e. they don’t change variable names or types, and don’t do partial matching) and complain more (e.g. when a variable does not exist). This forces you to confront problems earlier, typically leading to cleaner, more expressive code. Tibbles also have an enhanced print() method which makes them easier to use with large datasets containing complex objects.
+
+If you are new to tibbles, the best place to start is the tibbles chapter in R for data science (https://r4ds.had.co.nz/).  
+
+
+```{r}
+data(diamond)                               # Read diamond dataset.
+Diamonds <- as_tibble(diamond)              # Convert the data,frame to a 
+                                            # tibble.
+#
+################################################################################
+# Note all my data bjectw will start with a capital letter
+################################################################################
+#
+Diamonds                                    # Display the tibble.                                   
+```
+
+### Creating a simple scatter plot  
+
+The statistician Brian Joiner has said, "There is no excuse for not plotting and
+looking at your data.  We do this to assess the nature of the data.  We will
+use the R-package $ggplot$ to perform this task.  The $ggplot2$ package is 
+automatically loaded when we required the $tidyverse$ package.
+
+We start with a simple scatter plot.
+
+```{r}
+ggplot( Diamonds,
+        aes( x = carat,
+             y = price )) +
+  geom_point() +
+  xlab("Carats") +
+  ylab("Price(Singapore dollars)" ) +
+  ggtitle( "Singapore Starter Diamond Ring Prices by Carats") +
+  theme_cowplot()
+```
+
